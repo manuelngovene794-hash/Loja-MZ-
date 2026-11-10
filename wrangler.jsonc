@@ -1,0 +1,15 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "loja-mz",
+  "compatibility_date": "2026-11-10",
+  "main": "worker.js",
+  "observability": { "enabled": true },
+  "assets": { "directory": "public" },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "loja-mz-db",
+      "database_id": "d9eeae22-0347-4f46-b3d9-b1069e45357d"
+    }
+  ]
+}
