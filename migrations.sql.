@@ -1,0 +1,64 @@
+sql
+CREATE TABLE IF NOT EXISTS users (
+  id TEXT PRIMARY KEY,
+  nome TEXT,
+  email TEXT UNIQUE,
+  senha TEXT,
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS produtos (
+  id TEXT PRIMARY KEY,
+  user_id TEXT,
+  nome TEXT,
+  preco REAL,
+  estoque INTEGER DEFAULT 0,
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS clientes (
+  id TEXT PRIMARY KEY,
+  user_id TEXT,
+  nome TEXT,
+  telefone TEXT,
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS despesas (
+  id TEXT PRIMARY KEY,
+  user_id TEXT,
+  descricao TEXT,
+  valor REAL,
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS vendas (
+  id TEXT PRIMARY KEY,
+  user_id TEXT,
+  cliente_id TEXT,
+  total REAL,
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS itens_venda (
+  id TEXT PRIMARY KEY,
+  venda_id TEXT,
+  produto_id TEXT,
+  quantidade INTEGER,
+  preco REAL
+);
+
+CREATE TABLE IF NOT EXISTS pagamentos (
+  id TEXT PRIMARY KEY,
+  user_id TEXT,
+  venda_id TEXT,
+  valor REAL,
+  metodo TEXT,
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS sessions (
+  id TEXT PRIMARY KEY,
+  user_id TEXT,
+  expires_at TEXT
+);
