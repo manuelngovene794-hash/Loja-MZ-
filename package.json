@@ -1,0 +1,16 @@
+
+{
+  "name": "loja-mz",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Plataforma de gestão de lojas em Moçambique",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db-create": "wrangler d1 create loja-mz-db",
+    "db-init": "wrangler d1 execute loja-mz-db --remote --file=schema.sql"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}
