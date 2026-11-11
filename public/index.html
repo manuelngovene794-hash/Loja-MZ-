@@ -1,127 +1,60 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#123c2c">
-  <meta name="description" content="Gestão simples de vendas, produtos e stock para lojas em Moçambique.">
-  <title>Loja MZ</title>
-  <link rel="manifest" href="/manifest.json">
-  <link rel="icon" href="/icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="/style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#123c2c">
+<title>Loja MZ</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icone.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="topbar">
-    <div class="brand"><span class="brand-icon">MZ</span> Loja MZ</div>
-    <button id="logout" class="secondary hidden">Sair</button>
-  </header>
+<header class="barra-superior">
+<div class="marca"><span class="icone-da-marca">MZ</span> Loja MZ</div>
+<div style="display:flex;gap:8px;align-items:center">
+<button onclick="ligarDesligarSom()" id="botaoSom" style="background:#fff;border:none;font-size:22px;padding:6px 10px;border-radius:50%">🔊</button>
+<button onclick="abrirNotificacoes()" style="background:#fff;border:none;font-size:22px;position:relative;padding:6px 10px;border-radius:50%">🔔<span id="contadorNotif" style="position:absolute;top:-2px;right:-2px;background:red;color:#fff;font-size:11px;padding:2px 6px;border-radius:50%;display:none">0</span></button>
+<button id="sair" class="secundario oculto">Sair</button>
+</div>
+</header>
 
-  <main class="container">
-    <section id="auth">
-      <div class="welcome">
-        <h1>Gestão da tua loja, num só lugar.</h1>
-        <p>Controla produtos, vendas, stock e despesas em meticais.</p>
-      </div>
+<!-- CAIXA NOTIFICAÇÕES -->
+<div id="caixaNotif" style="display:none;position:fixed;top:60px;right:10px;left:10px;max-width:480px;margin:0 auto;background:#fff;border:1px solid #ddd;border-radius:12px;padding:12px;z-index:999;box-shadow:0 4px 20px rgba(0,0,0,0.2)">
+<div style="display:flex;justify-content:space-between;align-items:center"><b>🔔 Notificações</b><button onclick="fecharNotificacoes()" style="border:none;background:#eee;padding:4px 10px;border-radius:8px">X</button></div>
+<div id="listaNotif" style="margin-top:10px;max-height:350px;overflow:auto"></div>
+<button onclick="limparNotificacoes()" style="margin-top:10px;width:100%;padding:10px;background:#64748b;color:#fff;border:none;border-radius:8px">Limpar tudo</button>
+</div>
 
-      <div class="panel">
-        <div class="tabs">
-          <button id="loginTab" class="tab active">Entrar</button>
-          <button id="registerTab" class="tab">Criar conta</button>
-        </div>
-
-        <form id="authForm">
-          <label id="nameLabel" class="hidden">Nome
-            <input id="name" maxlength="80" autocomplete="name">
-          </label>
-          <label>Email
-            <input id="email" type="email" required autocomplete="email">
-          </label>
-          <label>Palavra-passe
-            <input id="password" type="password" required autocomplete="current-password">
-          </label>
-          <button id="authSubmit" class="primary" type="submit">Entrar</button>
-        </form>
-        <p id="authMessage" class="message"></p>
-      </div>
-    </section>
-
-    <section id="app" class="hidden">
-      <div class="welcome">
-        <h1 id="greeting">Painel da loja</h1>
-        <p>Resumo da actividade da tua loja.</p>
-      </div>
-
-      <div class="stats">
-        <article class="stat"><span>Vendas</span><strong id="salesTotal">0 MT</strong></article>
-        <article class="stat"><span>Produtos</span><strong id="productCount">0</strong></article>
-        <article class="stat"><span>Unidades em stock</span><strong id="stockUnits">0</strong></article>
-        <article class="stat warning"><span>Stock baixo</span><strong id="lowStock">0</strong></article>
-        <article class="stat"><span>Despesas</span><strong id="expensesTotal">0 MT</strong></article>
-      </div>
-
-      <nav class="navigation">
-        <button data-page="products" class="nav active">Produtos</button>
-        <button data-page="sales" class="nav">Vendas</button>
-        <button data-page="customers" class="nav">Clientes</button>
-        <button data-page="expenses" class="nav">Despesas</button>
-      </nav>
-
-      <section id="productsPage" class="page panel">
-        <h2>Produtos</h2>
-        <form id="productForm" class="form-grid">
-          <label>Nome do produto<input id="productName" required maxlength="120"></label>
-          <label>Categoria<input id="productCategory" maxlength="80"></label>
-          <label>Preço de compra (MT)<input id="costPrice" type="number" min="0" step="0.01" required></label>
-          <label>Preço de venda (MT)<input id="salePrice" type="number" min="0" step="0.01" required></label>
-          <label>Quantidade<input id="productStock" type="number" min="0" step="1" required></label>
-          <button class="primary" type="submit">Adicionar produto</button>
-        </form>
-        <p id="productMessage" class="message"></p>
-        <div id="productList" class="records"></div>
-      </section>
-
-      <section id="salesPage" class="page panel hidden">
-        <h2>Registar venda</h2>
-        <form id="saleForm">
-          <label>Produto
-            <select id="saleProduct" required></select>
-          </label>
-          <label>Quantidade
-            <input id="saleQuantity" type="number" min="1" step="1" value="1" required>
-          </label>
-          <button class="primary" type="submit">Confirmar venda</button>
-        </form>
-        <p id="saleMessage" class="message"></p>
-        <h3>Histórico de vendas</h3>
-        <div id="saleList" class="records"></div>
-      </section>
-
-      <section id="customersPage" class="page panel hidden">
-        <h2>Clientes</h2>
-        <form id="customerForm">
-          <label>Nome<input id="customerName" required maxlength="120"></label>
-          <label>Telefone<input id="customerPhone" maxlength="30"></label>
-          <button class="primary" type="submit">Adicionar cliente</button>
-        </form>
-        <p id="customerMessage" class="message"></p>
-        <div id="customerList" class="records"></div>
-      </section>
-
-      <section id="expensesPage" class="page panel hidden">
-        <h2>Despesas</h2>
-        <form id="expenseForm">
-          <label>Descrição<input id="expenseDescription" required maxlength="180"></label>
-          <label>Valor (MT)<input id="expenseAmount" type="number" min="0.01" step="0.01" required></label>
-          <button class="primary" type="submit">Registar despesa</button>
-        </form>
-        <p id="expenseMessage" class="message"></p>
-        <div id="expenseList" class="records"></div>
-      </section>
-    </section>
-  </main>
-
-  <footer>Loja MZ · Gestão de lojas em Moçambique</footer>
-  <script src="/app.js" defer></script>
-</body>
-  </html>
-          
+<main class="recipiente">
+<section id="autorizacao">
+<div class="bem-vindo"><h1>Gestão da sua loja, num só lugar.</h1><p>Controla produtos, vendas, estoque e despesas em meticais.</p><p style="background:#fef3c7;padding:8px;border-radius:8px;color:#000"><b>🎁 7 DIAS GRÁTIS</b> - Depois todo mês paga: 100 MT Pequena | 200 MT Média | 300 MT Super</p></div>
+<div class="painel"><div class="abas"><button id="aba-de-login" class="guia ativa">Entrar</button><button id="aba-de-registro" class="guia">Criar conta</button></div>
+<form id="formulario-de-autorizacao">
+<label class="rotulo-do-nome escondido" id="labelNomeLoja">Nome da tua loja</label><input id="nomeLoja" class="escondido" maxlength="80" placeholder="Ex: Loja da Mama Ana">
+<label class="rotulo-do-nome escondido">Nome</label><input id="nome" maxlength="80">
+<label class="escondido" id="labelTitular">Teu nome no M-Pesa (Titular)</label><input id="titularMpesa" class="escondido" placeholder="Ex: ANA MARIA" maxlength="80">
+<label class="escondido" id="labelNumeroMpesa">Teu número M-Pesa para receber do cliente</label><input id="numeroMpesa" class="escondido" placeholder="Ex: 84 123 4567" maxlength="20">
+<label>E-mail</label><input id="e-mail" type="email" required>
+<label>Palavra-passe</label>
+<div style="display:flex;gap:5px"><input id="senha" type="password" required style="flex:1"><button type="button" onclick="mostrarSenha()" style="width:48px;background:#64748b;border:none;border-radius:8px;color:#fff">👁️</button></div>
+<button id="autSubmit" class="primario" type="enviar">Entrar</button>
+</form></div></section>
+<section id="aplicativo" class="escondido">
+<div class="bem-vindo"><h1 id="saudacao">Painel da loja</h1><div id="avisoTrial" style="background:#fef3c7;padding:10px;border-radius:8px;color:#000;font-weight:bold;display:none"></div><div id="avisoLimite" style="background:#fee2e2;padding:8px;border-radius:8px;color:#000;display:none;font-weight:bold"></div></div>
+<div class="estatisticas">
+<article class="estatistica"><span>Vendas</span><strong id="vendasTotal">0 MT</strong></article>
+<article class="estatistica"><span>Produtos</span><strong id="contagem-de-produtos">0</strong></article>
+<article class="estatistica"><span>Unidades</span><strong id="unidades-em-estoque">0</strong></article>
+<article class="estatistica"><span>Lucro</span><strong id="lucroTotal">0 MT</strong></article>
+<article class="estatistica aviso"><span>Estoque baixo</span><strong id="baixo-estoque">0</strong></article>
+<article class="estatistica"><span>Despesas</span><strong id="despesasTotal">0 MT</strong></article>
+<article class="estatistica"><span>Fiado</span><strong id="fiadoTotal">0 MT</strong></article>
+<article class="estatistica"><span>Vendas este mês</span><strong id="vendasMes">0 / 0</strong></article>
+</div>
+<nav class="navegacao"><button data-page="produtos" class="navegacao ativa">Produtos</button><button data-page="vendas" class="navegacao">Vendas</button><button data-page="clientes" class="navegacao">Clientes</button><button data-page="despesas" class="navegacao">Despesas</button></nav>
+<section id="pagina-de-produtos" class="painel-de-pagina"><h2>Produtos</h2><input id="pesquisaProduto" placeholder="🔍 Procurar..." oninput="filtrarProdutos()"><form id="formulario-de-produto" class="grade-de-formulario"><label>Nome<input id="nome_do_produto" required></label><label>Categoria<input id="categoria-do-produto" placeholder="Ex: Alimentação"></label><label>Preço compra (MT)<input id="preco-de-custo" type="number" min="0" step="0.01" required></label><label>Preço Venda (MT)<input id="preco-de-venda" type="number" min="0" step="0.01" required></label><label>Quantidade<input id="estoque-de-produtos" type="number" min="0" required></label><label>Avisar abaixo de<input id="minStock" type="number" value="2"></label><button class="primario" type="enviar">Guardar Produto</button></form><div id="lista-de-produtos"></div></section>
+<section id="pagina-de-vendas" class="painel-de-pagina oculto"><h2>Vendas</h2><form id="formulario-de-venda"><label>Produto<select id="produto-em-venda" required></select></label><label>Quantidade<input id="quantidade-de-venda" type="number" min="1" value="1" required></label><label>Forma<select id="formaPagamento"><option>Dinheiro</option><option>M-Pesa</option><option>e-Mola</option><option>Fiado</option><option>Transferência</option></select></label><label>Cliente<input id="clienteVenda" placeholder="Nome do cliente"></label><button class="primario" type="enviar">Confirmar Venda</button></form><h3>Histórico</h3><div id="lista-de-vendas"></div><h3>😤 Fiado</h3><div id="listaFiado"></div></section>
+<section id="pagina-de-clientes" class="painel-de-pagina oculto"><h2>Clientes</h2><form id="formulario-do-cliente"><label>Nome<input id="nomeDoCliente" required></label><label>Telefone<input id="telefone-do-cliente"></label><button class="primario" type="enviar">Salvar Cliente</button></form><div id="lista-de-clientes"></div></section>
+<section id="pagina-de-despesas" class="painel-de-pagina oculto"><h2>Despesas</h2><form id="formulario-de-despesas"><label>Descrição<input id="descricao-da-despesa" required></label><label>Valor<input id="valor-da-despesa" type="number" min="0.01" step="0.01" required></label><button class="primario" type="enviar">Salvar Despesa</button></form><div id="lista-de-despesas"></div></section>
+</section></main><footer>Loja MZ - Gestão de lojas em Moçambique</footer><script src="app.js"></script></body></html>
